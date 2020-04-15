@@ -1,4 +1,4 @@
-#Simple Word2Vec training using numpy to get more familiar with model.
+# Simple Word2Vec training using numpy to get more familiar with model.
 
 Papers used : 
  - https://papers.nips.cc/paper/5021-distributed-representations-of-words-and-phrases-and-their-compositionality.pdf
