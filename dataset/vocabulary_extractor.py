@@ -1,5 +1,5 @@
 import pickle
-
+import numpy as np
 
 class VocabularyExtractor:
     def __init__(self, file_paths, then='auto'):
@@ -35,6 +35,9 @@ class VocabularyExtractor:
         with open('dataset/vocabulary_dictionary.pickle', 'wb') as f:
             pickle.dump(self.vocabulary_dictionary, f, pickle.HIGHEST_PROTOCOL)
 
+    def vocabulary_size(self):
+        return self.vocabulary_dictionary['total_count']
+
     def load_vocabulary_dictionary(self):
         try:
             with open('dataset/vocabulary_dictionary.pickle', 'rb') as f:
@@ -43,3 +46,17 @@ class VocabularyExtractor:
         except IOError:
             print("Warning : You tried to load the matrix but file vocabulary_dictionary.pickle is missing")
             return -1
+
+    def get_word_index(self, word):
+        if word in self.vocabulary_dictionary:
+            return self.vocabulary_dictionary[word]
+        else:
+            raise ValueError('Word not found in dictionary')
+
+    def get_context_vector(self, context: list) -> np.array:
+        out = np.zeros(self.vocabulary_size())
+        for word in context:
+            out[self.get_word_index(word)] += 1
+        return out/sum(out)
+
+
