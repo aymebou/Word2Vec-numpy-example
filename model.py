@@ -1,5 +1,5 @@
 import numpy as np
-
+import pickle
 
 class Word2VecEmbeddingTrainer:
     def __init__(self, embedding_dimension, vocabulary_size):
@@ -23,7 +23,8 @@ class Word2VecEmbeddingTrainer:
 
     @staticmethod
     def softmax(array):
-        exp_array = np.exp(array)
+
+        exp_array = np.exp(array - max(array))
         return exp_array / sum(exp_array)
 
     @staticmethod
@@ -33,9 +34,8 @@ class Word2VecEmbeddingTrainer:
     def forward(self, center_word, loss_function=cross_entropy):
         """
         :param center_word: the index of the center word within dictionary, not a one-hot vector
-        :param word_context: should be a list of word indexes within dictionary, not one-hot vectors
-        returns a probability vector of the word that should follow this sequence
         :param loss_function: function used for backpropagation value storage
+        returns a probability vector of the word that should follow this sequence
         """
         out = np.matmul(self.embedding_matrix_context, self._center_embedding(center_word))
         out = self.softmax(out)
@@ -63,3 +63,15 @@ class Word2VecEmbeddingTrainer:
     def zero_grad(self):
         self.embedding_matrix_center_grad = np.zeros_like(self.embedding_matrix_center)
         self.embedding_matrix_context_grad = np.zeros_like(self.embedding_matrix_context)
+
+    def save(self):
+        with open('model/embedding_matrix_center.pickle', 'wb') as f:
+            pickle.dump(self.embedding_matrix_center, f, pickle.HIGHEST_PROTOCOL)
+        with open('model/embedding_matrix_context.pickle', 'wb') as f:
+            pickle.dump(self.embedding_matrix_context, f, pickle.HIGHEST_PROTOCOL)
+
+    def load(self):
+        with open('model/embedding_matrix_center.pickle', 'rb') as f:
+            self.embedding_matrix_center = pickle.load(f)
+        with open('model/embedding_matrix_context.pickle', 'rb') as f:
+            self.embedding_matrix_context = pickle.load(f)

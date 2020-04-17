@@ -5,9 +5,7 @@ class VocabularyExtractor:
     def __init__(self, file_paths, then='auto'):
         self.file_paths = file_paths
 
-        self.vocabulary_dictionary = {
-            'total_count': 0
-        }
+        self.vocabulary_dictionary = {}
 
         if then == 'load_dict':
             self.load_vocabulary_dictionary()
@@ -27,16 +25,15 @@ class VocabularyExtractor:
     def append_file_vocabulary_to_vocabulary_dictionary(self, file_descriptor):
         for lines in file_descriptor.readlines():
             for word in lines.strip().split(' '):
-                if word != '' and word not in self.vocabulary_dictionary:
-                    self.vocabulary_dictionary[word] = self.vocabulary_dictionary['total_count']
-                    self.vocabulary_dictionary['total_count'] += 1
+                if word != '' and word.lower() not in self.vocabulary_dictionary:
+                    self.vocabulary_dictionary[word.lower()] = len(self.vocabulary_dictionary)
 
     def save_dictionary(self):
         with open('dataset/vocabulary_dictionary.pickle', 'wb') as f:
             pickle.dump(self.vocabulary_dictionary, f, pickle.HIGHEST_PROTOCOL)
 
     def vocabulary_size(self):
-        return self.vocabulary_dictionary['total_count']
+        return len(self.vocabulary_dictionary)
 
     def load_vocabulary_dictionary(self):
         try:
@@ -51,12 +48,13 @@ class VocabularyExtractor:
         if word in self.vocabulary_dictionary:
             return self.vocabulary_dictionary[word]
         else:
-            raise ValueError('Word not found in dictionary')
+            raise ValueError('Word not found in dictionary: "%s"' % word)
 
     def get_context_vector(self, context: list) -> np.array:
         out = np.zeros(self.vocabulary_size())
         for word in context:
             out[self.get_word_index(word)] += 1
         return out/sum(out)
+
 
 
