@@ -35,7 +35,7 @@ for sentence_index in range(len(dataset)):
                 truth_context_words = context_to_indexes(context)
                 neg_samplings = model.neg_sampling_ids(vocabulary_extractor.probabilities_neg_sampling, truth_context_words)
 
-                target = np.array([1 for k in truth_context_words] + [0 for k in neg_samplings])
+                target = np.array([1/len(truth_context_words) for k in truth_context_words] + [0 for k in neg_samplings])
                 sampling_ids = np.append(truth_context_words, neg_samplings)
                 predicted = model(word_index, sampling_ids)
                 model.update_gradients(predicted, target, word_index, sampling_ids)
