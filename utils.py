@@ -6,6 +6,6 @@ def random_length_bound_sequence_around(index, array):
     up = index + randint(1, 5)
     out = []
     for k in range(low, up + 1):
-        if 0 < k < len(array):
+        if 0 < k < len(array) and k != index:
             out.append(array[k])
     return out

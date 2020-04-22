@@ -1,6 +1,7 @@
 class Dataset:
     def __init__(self, file_path):
         self.file_path = file_path
+        self.word_count = 0
         self.sentences = self.sentences_array()
 
     def __len__(self):
@@ -13,6 +14,7 @@ class Dataset:
         for lines in file_descriptor.readlines():
             for sentence in lines.strip().split('.'):
                 out.append(sentence.strip())
+                self.word_count += len(sentence.split(' '))
 
         file_descriptor.close()
         return out
